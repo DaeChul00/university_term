@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: e136db1cb4ebe944e9ff84a7e50d279d
+guid: 0a8559d6fb18cbb4c9ad65faea87ce52
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,7 +97,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: HURT_0
+      name: DEFEND_0
       rect:
         serializedVersion: 2
         x: 0
@@ -111,14 +111,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 938217cb372461e4d93bee0a7ef8f9cf
-      internalID: 1165779392
+      spriteID: 659eb902f3f0fe540b5202b3b3af329e
+      internalID: -1083389310
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: HURT_1
+      name: DEFEND_1
       rect:
         serializedVersion: 2
         x: 96
@@ -132,14 +132,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 43c287caf4c2e0c43bcd97230acb7fe0
-      internalID: -1023878772
+      spriteID: 91f7474c4167c5b449ac1af3b367c910
+      internalID: -279155890
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: HURT_2
+      name: DEFEND_2
       rect:
         serializedVersion: 2
         x: 192
@@ -153,14 +153,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d38a9648b01f9e048a0a65c4f844fc3d
-      internalID: -1041256107
+      spriteID: c08ff1e7800b4344780d7ec8facce9be
+      internalID: -2041318648
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: HURT_3
+      name: DEFEND_3
       rect:
         serializedVersion: 2
         x: 288
@@ -174,8 +174,50 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4bb0ee0f92ce95946a6f806faf543649
-      internalID: 1849538617
+      spriteID: 4aad6db8a5db3514d974d6c2d49c38a7
+      internalID: -1231696158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DEFEND_4
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 0
+        width: 96
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a12a0213fa5c146459ae736f4755d71a
+      internalID: -659799000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DEFEND_5
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 0
+        width: 96
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 10fef1fa0ae531b4886f9d73356d8c79
+      internalID: 357640094
       vertices: []
       indices: 
       edges: []
@@ -191,10 +233,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      HURT_0: 1165779392
-      HURT_1: -1023878772
-      HURT_2: -1041256107
-      HURT_3: 1849538617
+      DEFEND_0: -1083389310
+      DEFEND_1: -279155890
+      DEFEND_2: -2041318648
+      DEFEND_3: -1231696158
+      DEFEND_4: -659799000
+      DEFEND_5: 357640094
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

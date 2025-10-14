@@ -13,16 +13,14 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;          // Rigidbody2D 컴포넌트
     private Animator animator;       // Animator 컴포넌트
     private bool isGrounded;         // 땅에 닿았는지 확인 플래그
-    private bool isAttacking = false; // 공격 중인지 확인하는 플래그 (이중 공격 방지 핵심)
-
-    // ===================================
-    //     Unity Life Cycle Methods
-    // ===================================
+    private bool isAttacking = false; // 공격 중인지 확인하는 플래그 (이중 공격 방지)
+    private PlayerHealth playerHealth;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        playerHealth = GetComponent<PlayerHealth>();
 
         // 시작 시 공격 콜라이더 비활성화
         if (attackCollider != null)
@@ -61,6 +59,14 @@ public class PlayerController : MonoBehaviour
             Vector3 currentPos = transform.position;
             currentPos.x = Mathf.Clamp(currentPos.x, minX, maxX);
             transform.position = currentPos;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q)) // Q 키를 패링 입력으로 사용
+        {
+            if (playerHealth != null)
+            {
+                playerHealth.StartParryAttempt();
+            }
         }
     }
 

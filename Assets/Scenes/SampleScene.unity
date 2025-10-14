@@ -586,6 +586,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  parryWindow: 0.2
 --- !u!1 &289504808
 GameObject:
   m_ObjectHideFlags: 0
@@ -874,6 +875,7 @@ MonoBehaviour:
   sightRange: 7
   attackRange: 2
   attackDamage: 20
+  attackCooldown: 2
   attackCollider: {fileID: 0}
 --- !u!1 &341031232
 GameObject:
