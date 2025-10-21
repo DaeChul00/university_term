@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI; // UI 사용을 위해 추가
 using System.Collections;
 
 public class PlayerHealth : MonoBehaviour
@@ -6,8 +7,9 @@ public class PlayerHealth : MonoBehaviour
     
     public float maxHealth = 100f;
     public float parryWindow = 0.2f; // 패링 가능한 짧은 시간
+    public Slider healthSlider; // 플레이어 체력 바 Slider
 
-  
+
     private float currentHealth;
     private Animator animator;
     private bool isParrying = false;  // 현재 패링 시도 중인지
@@ -17,6 +19,13 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth = maxHealth;
         animator = GetComponent<Animator>();
+
+        // 체력 바 초기화
+        if (healthSlider != null)
+        {
+            healthSlider.maxValue = maxHealth;
+            healthSlider.value = currentHealth;
+        }
     }
 
     // 적의 공격에 피해를 입는 함수 (패링 로직 추가)
@@ -42,6 +51,12 @@ public class PlayerHealth : MonoBehaviour
         currentHealth -= damage;
         Debug.Log("일반 피격! 남은 체력: " + currentHealth);
 
+        // 체력 바 업데이트
+        if (healthSlider != null)
+        {
+            healthSlider.value = currentHealth;
+        }
+
         // 피격 애니메이션 및 무적 코루틴 실행
         animator.SetTrigger("Hurt");
         StartCoroutine(BecomeTemporarilyInvincible(1.0f)); // 1초간 무적 상태 부여
@@ -55,8 +70,15 @@ public class PlayerHealth : MonoBehaviour
     void Die()
     {
         Debug.Log("플레이어가 사망했습니다. 게임 오버!");
-        
-        Destroy(gameObject);
+
+        // GameManager에 게임 오버를 알림
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.GameOver();
+        }
+
+        // 플레이어 오브젝트를 파괴하는 대신 비활성화
+        gameObject.SetActive(false);
     }
 
     // 무적 상태를 관리하는 코루틴
