@@ -61,11 +61,11 @@ public class PlayerController : MonoBehaviour
             transform.position = currentPos;
         }
 
-        if (Input.GetKeyDown(KeyCode.Q)) // Q 키를 패링 입력으로 사용
+        if (Input.GetKeyDown(KeyCode.Q) && !isAttacking && !playerHealth.IsParrying()) // Q 키를 패링 입력으로 사용
         {
             if (playerHealth != null)
             {
-                playerHealth.StartParryAttempt();
+                playerHealth.AttemptParry();
             }
         }
     }

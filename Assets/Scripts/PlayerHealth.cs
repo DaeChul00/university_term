@@ -1,26 +1,26 @@
-using UnityEngine;
-using UnityEngine.UI; // UI »ç¿ëÀ» À§ÇØ Ãß°¡
+ï»¿using UnityEngine;
+using UnityEngine.UI; // UI ì‚¬ìš©ì„ ìœ„í•´ ì¶”ê°€
 using System.Collections;
 
 public class PlayerHealth : MonoBehaviour
 {
-    
+    // === Public Variables ===
     public float maxHealth = 100f;
-    public float parryWindow = 0.2f; // ÆĞ¸µ °¡´ÉÇÑ ÂªÀº ½Ã°£
-    public Slider healthSlider; // ÇÃ·¹ÀÌ¾î Ã¼·Â ¹Ù Slider
+    public float parryWindow = 0.2f; // íŒ¨ë§ ê°€ëŠ¥í•œ ì§§ì€ ì‹œê°„
+    public Slider healthSlider; // í”Œë ˆì´ì–´ ì²´ë ¥ ë°” Slider
 
-
+    // === Private Variables ===
     private float currentHealth;
     private Animator animator;
-    private bool isParrying = false;  // ÇöÀç ÆĞ¸µ ½Ãµµ ÁßÀÎÁö
-    private bool isInvincible = false; // ÇÇ°İ ÈÄ ¹«Àû »óÅÂÀÎÁö
+    private bool isParrying = false;  // í˜„ì¬ íŒ¨ë§ ì‹œë„ ì¤‘ì¸ì§€
+    private bool isInvincible = false; // í”¼ê²© í›„ ë¬´ì  ìƒíƒœì¸ì§€
 
     void Start()
     {
         currentHealth = maxHealth;
         animator = GetComponent<Animator>();
 
-        // Ã¼·Â ¹Ù ÃÊ±âÈ­
+        // ì²´ë ¥ ë°” ì´ˆê¸°í™”
         if (healthSlider != null)
         {
             healthSlider.maxValue = maxHealth;
@@ -28,38 +28,55 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    // ÀûÀÇ °ø°İ¿¡ ÇÇÇØ¸¦ ÀÔ´Â ÇÔ¼ö (ÆĞ¸µ ·ÎÁ÷ Ãß°¡)
-    public void TakeDamage(float damage)
+    // === íŒ¨ë§ ìƒíƒœ í™•ì¸ í•¨ìˆ˜ ===
+    // PlayerControllerê°€ "ì´ë¯¸ íŒ¨ë§ ì¤‘ì¸ê°€?"ë¥¼ ë¬»ê¸° ìœ„í•´ í˜¸ì¶œí•©ë‹ˆë‹¤.
+    public bool IsParrying()
     {
-        // 1. ¹«Àû »óÅÂ Ã¼Å©
+        return isParrying;
+    }
+
+    // === í”¼ê²© íŒì • í•¨ìˆ˜ (í•µì‹¬ ìˆ˜ì •) ===
+    // ì ì´ ê³µê²©í•  ë•Œ "ëˆ„ê°€" ê³µê²©í–ˆëŠ”ì§€(attacker)ë¥¼ ë°›ë„ë¡ ìˆ˜ì •í•©ë‹ˆë‹¤.
+    public void TakeDamage(float damage, GameObject attacker)
+    {
+        // 1. ë¬´ì  ìƒíƒœ ì²´í¬
         if (isInvincible) return;
 
-        // 2. ÆĞ¸µ »óÅÂ Ã¼Å© (ÇÙ½É ·ÎÁ÷)
+        // 2. íŒ¨ë§ ìƒíƒœ ì²´í¬ (í•µì‹¬ ë¡œì§)
         if (isParrying)
         {
-            // --- ÆĞ¸µ ¼º°ø ---
-            Debug.Log("ÆĞ¸µ ¼º°ø! Àû ½ºÅÏ È¿°ú ¹ß»ı!");
-            
+            // --- íŒ¨ë§ ì„±ê³µ ---
+            Debug.Log("íŒ¨ë§ ì„±ê³µ! ì  ìŠ¤í„´ íš¨ê³¼ ë°œìƒ!");
 
-            // ÆĞ¸µ ¼º°ø ½Ã¿¡µµ ÂªÀº ¹«Àû ½Ã°£ ºÎ¿© (¼±ÅÃ »çÇ×)
+            // â­ï¸ ì¶”ê°€ëœ ë¶€ë¶„: ê³µê²©í•œ ì (attacker)ì„ ìŠ¤í„´ì‹œí‚µë‹ˆë‹¤.
+            if (attacker != null)
+            {
+                EnemyAI enemy = attacker.GetComponent<EnemyAI>();
+                if (enemy != null)
+                {
+                    enemy.StunEnemy(2.0f); // 2ì´ˆê°„ ìŠ¤í„´
+                }
+            }
+
+            // íŒ¨ë§ ì„±ê³µ ì‹œì—ë„ ì§§ì€ ë¬´ì  ì‹œê°„ ë¶€ì—¬ (ì„ íƒ ì‚¬í•­)
             StartCoroutine(BecomeTemporarilyInvincible(0.5f));
 
-            return; // ÆĞ¸µ ¼º°ø ½Ã ÇÇÇØ¸¦ ÀÔÁö ¾Ê°í ÇÔ¼ö Á¾·á
+            return; // íŒ¨ë§ ì„±ê³µ ì‹œ í”¼í•´ë¥¼ ì…ì§€ ì•Šê³  í•¨ìˆ˜ ì¢…ë£Œ
         }
 
-        // --- ÆĞ¸µ ½ÇÆĞ / ÀÏ¹İ ÇÇ°İ ---
+        // --- íŒ¨ë§ ì‹¤íŒ¨ / ì¼ë°˜ í”¼ê²© ---
         currentHealth -= damage;
-        Debug.Log("ÀÏ¹İ ÇÇ°İ! ³²Àº Ã¼·Â: " + currentHealth);
+        Debug.Log("ì¼ë°˜ í”¼ê²©! ë‚¨ì€ ì²´ë ¥: " + currentHealth);
 
-        // Ã¼·Â ¹Ù ¾÷µ¥ÀÌÆ®
+        // ì²´ë ¥ ë°” ì—…ë°ì´íŠ¸
         if (healthSlider != null)
         {
             healthSlider.value = currentHealth;
         }
 
-        // ÇÇ°İ ¾Ö´Ï¸ŞÀÌ¼Ç ¹× ¹«Àû ÄÚ·çÆ¾ ½ÇÇà
+        // í”¼ê²© ì• ë‹ˆë©”ì´ì…˜ ë° ë¬´ì  ì½”ë£¨í‹´ ì‹¤í–‰
         animator.SetTrigger("Hurt");
-        StartCoroutine(BecomeTemporarilyInvincible(1.0f)); // 1ÃÊ°£ ¹«Àû »óÅÂ ºÎ¿©
+        StartCoroutine(BecomeTemporarilyInvincible(1.0f)); // 1ì´ˆê°„ ë¬´ì  ìƒíƒœ ë¶€ì—¬
 
         if (currentHealth <= 0)
         {
@@ -69,19 +86,19 @@ public class PlayerHealth : MonoBehaviour
 
     void Die()
     {
-        Debug.Log("ÇÃ·¹ÀÌ¾î°¡ »ç¸ÁÇß½À´Ï´Ù. °ÔÀÓ ¿À¹ö!");
+        Debug.Log("í”Œë ˆì´ì–´ê°€ ì‚¬ë§í–ˆìŠµë‹ˆë‹¤. ê²Œì„ ì˜¤ë²„!");
 
-        // GameManager¿¡ °ÔÀÓ ¿À¹ö¸¦ ¾Ë¸²
+        // GameManagerì— ê²Œì„ ì˜¤ë²„ë¥¼ ì•Œë¦¼
         if (GameManager.instance != null)
         {
             GameManager.instance.GameOver();
         }
 
-        // ÇÃ·¹ÀÌ¾î ¿ÀºêÁ§Æ®¸¦ ÆÄ±«ÇÏ´Â ´ë½Å ºñÈ°¼ºÈ­
+        // í”Œë ˆì´ì–´ ì˜¤ë¸Œì íŠ¸ë¥¼ íŒŒê´´í•˜ëŠ” ëŒ€ì‹  ë¹„í™œì„±í™”
         gameObject.SetActive(false);
     }
 
-    // ¹«Àû »óÅÂ¸¦ °ü¸®ÇÏ´Â ÄÚ·çÆ¾
+    // ë¬´ì  ìƒíƒœë¥¼ ê´€ë¦¬í•˜ëŠ” ì½”ë£¨í‹´
     private IEnumerator BecomeTemporarilyInvincible(float duration)
     {
         isInvincible = true;
@@ -91,20 +108,20 @@ public class PlayerHealth : MonoBehaviour
         isInvincible = false;
     }
 
-    // PlayerController¿¡¼­ È£Ãâ: ÆĞ¸µ ÀÔ·ÂÀÌ µé¾î¿ÔÀ» ¶§
-    public void StartParryAttempt()
+    // PlayerControllerì—ì„œ í˜¸ì¶œ: íŒ¨ë§ ì…ë ¥ì´ ë“¤ì–´ì™”ì„ ë•Œ
+    public void AttemptParry()
     {
-        // ÆĞ¸µ ¾Ö´Ï¸ŞÀÌ¼Ç Æ®¸®°Å (Animator¿¡ "Parry" Trigger ÇÊ¿ä)
+        // íŒ¨ë§ ì• ë‹ˆë©”ì´ì…˜ íŠ¸ë¦¬ê±° (Animatorì— "Parry" Trigger í•„ìš”)
         animator.SetTrigger("Parry");
         isParrying = true;
 
-        // ÆĞ¸µ °¡´É ½Ã°£(parryWindow)ÀÌ Áö³ª¸é isParryingÀ» false·Î ¸®¼Â
+        // íŒ¨ë§ ê°€ëŠ¥ ì‹œê°„(parryWindow)ì´ ì§€ë‚˜ë©´ isParryingì„ falseë¡œ ë¦¬ì…‹
         StartCoroutine(ResetParryState());
     }
 
     private IEnumerator ResetParryState()
     {
-        // ÁöÁ¤µÈ ÂªÀº ½Ã°£ µ¿¾È¸¸ ÆĞ¸µÀÌ °¡´ÉÇÏµµ·Ï ´ë±â
+        // ì§€ì •ëœ ì§§ì€ ì‹œê°„ ë™ì•ˆë§Œ íŒ¨ë§ì´ ê°€ëŠ¥í•˜ë„ë¡ ëŒ€ê¸°
         yield return new WaitForSeconds(parryWindow);
 
         isParrying = false;

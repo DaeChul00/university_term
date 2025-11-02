@@ -1,11 +1,12 @@
 using UnityEngine;
-using System.Collections; // 쿨타임 관리를 위해 코루틴 필요
+using System.Collections; // 코루틴 사용을 위해 필요
 
 public class EnemyAI : MonoBehaviour
 {
+   
     public float moveSpeed = 3f;           // 이동 속도
     public float sightRange = 8f;          // 플레이어 인식 거리
-    public float attackRange = 1.5f;       // 공격이 가능한 거리
+    public float attackRange = 1.5f;       // 공격을 시작하는 거리
     public float attackDamage = 10f;       // 적의 공격력
     public float attackCooldown = 2f;      // 다음 공격까지의 쿨타임
     public Collider2D attackCollider;       // 적의 공격 판정 콜라이더 (Inspector에서 연결)
@@ -14,28 +15,25 @@ public class EnemyAI : MonoBehaviour
     private Rigidbody2D rb;
     private Animator animator;
     private bool canAttack = true;         // 현재 공격 가능한 상태인지 확인
+    private bool isStunned = false;        // 현재 기절 상태인지 확인 (패링용)
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
 
-        // "Player" 태그를 가진 오브젝트를 찾아서 target에 연결
+        // 게임 시작 시 "Player" 태그를 가진 오브젝트를 찾아서 target에 연결
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
         if (playerObject != null)
         {
             player = playerObject.transform;
         }
-        else
-        {
-            Debug.LogWarning("씬에서 'Player' 태그를 가진 오브젝트를 찾을 수 없습니다! 적 AI가 멈춥니다.");
-        }
     }
 
     void Update()
     {
-        // 1. target이 없으면 아무것도 하지 않음
-        if (player == null)
+        // 1. target이 없거나, 기절 상태라면 아무것도 하지 않음
+        if (player == null || isStunned)
         {
             rb.velocity = Vector2.zero;
             animator.SetFloat("speed", 0);
@@ -56,11 +54,11 @@ public class EnemyAI : MonoBehaviour
                 if (canAttack)
                 {
                     animator.SetTrigger("Attack"); // 'Attack' Trigger 실행
-                    canAttack = false;
-                    StartCoroutine(AttackCooldownRoutine()); // 쿨타임 코루틴 시작
+                    canAttack = false; // 공격 시작, 쿨타임 시작
+                    StartCoroutine(AttackCooldownRoutine()); // 쿨타임 관리 코루틴 시작
                 }
             }
-            // 1-2. 인식 범위 내 플레이어 추격
+            // 1-2. 인식 범위 내: 플레이어 추격
             else
             {
                 ChasePlayer();
@@ -98,40 +96,29 @@ public class EnemyAI : MonoBehaviour
     }
 
     // === 애니메이션 이벤트로 호출되는 함수 (플레이어에게 피해를 줌) ===
-
-    // 적 공격 애니메이션의 '공격 순간'에 호출됩니다.
     public void DealDamageToPlayer()
     {
-        Debug.Log("DealDamageToPlayer 함수가 호출되었습니다.");
-
+        if (player == null || isStunned) return;
         if (attackCollider == null)
         {
             Debug.LogError("Attack Collider가 Inspector에 연결되지 않았습니다!");
             return;
         }
 
-        // 공격 범위 내에 있는 모든 콜라이더를 감지합니다.
+        // 공격 범위 내의 모든 콜라이더를 감지합니다.
         Collider2D[] hitObjects = Physics2D.OverlapBoxAll(attackCollider.bounds.center, attackCollider.bounds.size, 0);
-        Debug.Log("공격 범위 내에서 " + hitObjects.Length + "개의 오브젝트를 감지했습니다.");
 
-        // 감지된 모든 오브젝트를 순회합니다.
         foreach (Collider2D hit in hitObjects)
         {
-            // 감지된 오브젝트의 이름과 태그를 콘솔에 출력합니다.
-            Debug.Log("감지된 오브젝트: " + hit.name + ", 태그: " + hit.tag);
-
             // 감지된 오브젝트의 태그가 "Player"인지 확인합니다.
             if (hit.CompareTag("Player"))
             {
                 PlayerHealth playerHealth = hit.GetComponent<PlayerHealth>();
                 if (playerHealth != null)
                 {
-                    playerHealth.TakeDamage(attackDamage);
-                    Debug.Log("성공: 플레이어에게 데미지를 전달했습니다!");
-                }
-                else
-                {
-                    Debug.LogError("오류: 'Player' 태그를 가진 오브젝트에서 PlayerHealth 스크립트를 찾을 수 없습니다.");
+                    // TakeDamage 호출 시 자신의 GameObject를 넘겨줍니다.
+                    playerHealth.TakeDamage(attackDamage, this.gameObject);
+                    Debug.Log("플레이어가 피해를 입었습니다! (적 AI)");
                 }
             }
         }
@@ -140,13 +127,29 @@ public class EnemyAI : MonoBehaviour
     // === 쿨타임 관리 코루틴 ===
     private IEnumerator AttackCooldownRoutine()
     {
-        // 1. Attack 애니메이션이 완전히 끝날 때까지 기다립니다
-        // 이 코드는 애니메이션이 끝난 후 쿨타임을 시작하도록 보장
+        // Attack 애니메이션이 완전히 끝날 때까지 기다린 후 쿨타임 시작
         yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
 
-        // 2. 설정된 쿨타임 시간만큼 대기
+        // 설정된 쿨타임 시간만큼 대기
         yield return new WaitForSeconds(attackCooldown);
 
         canAttack = true; // 쿨타임 종료, 다시 공격 가능
+    }
+
+    // === 스턴 관련 함수 (패링 성공 시 PlayerHealth가 호출) ===
+    public void StunEnemy(float duration)
+    {
+        StartCoroutine(StunRoutine(duration));
+    }
+
+    private IEnumerator StunRoutine(float duration)
+    {
+        isStunned = true;
+        animator.SetTrigger("Hurt"); // 피격 애니메이션(Hurt)을 스턴 모션으로 재활용
+
+        // 지정된 시간(duration)만큼 대기
+        yield return new WaitForSeconds(duration);
+
+        isStunned = false;
     }
 }
