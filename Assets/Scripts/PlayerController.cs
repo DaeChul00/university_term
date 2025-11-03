@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour
             isAttacking = true; // 공격 시작과 동시에 true로 설정하여 추가 입력 차단
         }
 
-        // === 맵 경계 내에서 플레이어 위치 제한 ===
+        /*// === 맵 경계 내에서 플레이어 위치 제한 ===
         if (mapBoundary != null)
         {
             float minX = mapBoundary.bounds.min.x;
@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
             Vector3 currentPos = transform.position;
             currentPos.x = Mathf.Clamp(currentPos.x, minX, maxX);
             transform.position = currentPos;
-        }
+        }*/
 
         if (Input.GetKeyDown(KeyCode.Q) && !isAttacking && !playerHealth.IsParrying()) // Q 키를 패링 입력으로 사용
         {
