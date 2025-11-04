@@ -3,7 +3,7 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     // 카메라가 따라갈 대상 (플레이어)
-    private Transform target; // public에서 private으로 변경
+    public Transform target; // public에서 private으로 변경
 
     // 카메라와 대상 간의 거리 (Z축)
     public float zOffset = -10f;
