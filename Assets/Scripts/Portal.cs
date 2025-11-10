@@ -1,44 +1,48 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // 씬 관리를 위해 필수!
+// using UnityEngine.SceneManagement; // 더 이상 씬 매니저가 필요 없으므로 삭제
 
 public class Portal : MonoBehaviour
 {
-    // Inspector 창에서 이동할 씬의 이름을 적어줍니다.
-    public string sceneToLoad;
+    // public string sceneToLoad; // 이 변수 삭제
 
-    // 플레이어가 포탈 범위 안에 있는지 확인하는 변수
     private bool playerIsAtPortal = false;
+    private LevelManager levelManager; // LevelManager를 참조
 
-    // 플레이어가 포탈 범위(트리거)에 들어왔을 때
+    void Start()
+    {
+        // 씬에 있는 LevelManager를 자동으로 찾아서 연결
+        levelManager = FindObjectOfType<LevelManager>();
+    }
+
+    // ... (OnTriggerEnter2D, OnTriggerExit2D는 이전과 동일)
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // 들어온 오브젝트가 "Player" 태그인지 확인
-        if (other.CompareTag("Player"))
-        {
-            playerIsAtPortal = true;
-            Debug.Log("플레이어가 포탈에 도착했습니다.");
-        }
+        if (other.CompareTag("Player")) playerIsAtPortal = true;
     }
-
-    // 플레이어가 포탈 범위(트리거)에서 나갔을 때
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
-        {
-            playerIsAtPortal = false;
-            Debug.Log("플레이어가 포탈을 떠났습니다.");
-        }
+        if (other.CompareTag("Player")) playerIsAtPortal = false;
     }
 
-    // 매 프레임마다 입력을 확인
+
     void Update()
     {
-        // 플레이어가 포탈에 있고(true) "윗 방향키"를 눌렀다면
+        // 플레이어가 포탈에 있고 윗 방향키를 눌렀을 때
         if (playerIsAtPortal && Input.GetKeyDown(KeyCode.UpArrow))
         {
-            // sceneToLoad 변수에 적힌 이름의 씬으로 이동합니다.
-            Debug.Log(sceneToLoad + " 씬으로 이동합니다!");
-            SceneManager.LoadScene(sceneToLoad);
+            if (levelManager != null)
+            {
+                // 스테이지가 클리어되었는지 확인
+                if (levelManager.IsStageClear())
+                {
+                    Debug.Log("스테이지 클리어! 다음으로 이동합니다.");
+                    levelManager.GoToNextStage();
+                }
+                else
+                {
+                    Debug.Log("포탈이 닫혀있다. 남은 적을 모두 처치해야 한다!");
+                }
+            }
         }
     }
 }

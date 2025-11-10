@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
         HandleMovement();
 
         // === 점프 ===
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        if (Input.GetKeyDown(KeyCode.C) && isGrounded)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         }
@@ -44,13 +44,13 @@ public class PlayerController : MonoBehaviour
 
         // === 공격 ===
         // isAttacking이 false일 때만 공격 허용
-        if (Input.GetMouseButtonDown(0) && !isAttacking)
+        if (Input.GetKeyDown(KeyCode.X) && !isAttacking)
         {
             animator.SetTrigger("Attack");
             isAttacking = true; // 공격 시작과 동시에 true로 설정하여 추가 입력 차단
         }
 
-        /*// === 맵 경계 내에서 플레이어 위치 제한 ===
+        // === 맵 경계 내에서 플레이어 위치 제한 ===
         if (mapBoundary != null)
         {
             float minX = mapBoundary.bounds.min.x;
@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
             Vector3 currentPos = transform.position;
             currentPos.x = Mathf.Clamp(currentPos.x, minX, maxX);
             transform.position = currentPos;
-        }*/
+        }
 
         if (Input.GetKeyDown(KeyCode.Q) && !isAttacking && !playerHealth.IsParrying()) // Q 키를 패링 입력으로 사용
         {
