@@ -1,9 +1,7 @@
 using UnityEngine;
-// using UnityEngine.SceneManagement; // 더 이상 씬 매니저가 필요 없으므로 삭제
 
 public class Portal : MonoBehaviour
 {
-    // public string sceneToLoad; // 이 변수 삭제
 
     private bool playerIsAtPortal = false;
     private LevelManager levelManager; // LevelManager를 참조

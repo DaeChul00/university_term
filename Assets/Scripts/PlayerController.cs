@@ -141,7 +141,7 @@ public class PlayerController : MonoBehaviour
             attackCollider.enabled = false; // 콜라이더 비활성화
         }
 
-        // isAttacking을 false로 설정하여 다음 공격을 허용 (핵심)
+        // isAttacking을 false로 설정하여 다음 공격을 허용
         isAttacking = false;
         Debug.Log("EndAttack 호출. 다음 공격 가능.");
     }
